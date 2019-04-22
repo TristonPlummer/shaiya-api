@@ -2,6 +2,7 @@ package net.shaiya.discord.events.impl.commands
 
 import com.google.gson.Gson
 import com.google.inject.Inject
+import mu.KLogging
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Member
@@ -119,7 +120,7 @@ class DetailsCommand @Inject constructor(client: JDA, private val databases: Dat
         // The embedded message builder
         val message = EmbedBuilder()
         message.setTitle("Character Details - ${user.charName}")
-        message.setColor(if (faction == ShaiyaFaction.LIGHT) Color.BLUE else Color.ORANGE)
+        message.setColor(if (faction == ShaiyaFaction.LIGHT) allianceOfLightColour else unionOfFuryColour)
         message.addField("Faction", faction.name.toTitleCase(), true)
         message.addField("Class", job.name.toTitleCase(), true)
         message.addField("Level", "${user.level}", true)
@@ -182,4 +183,21 @@ class DetailsCommand @Inject constructor(client: JDA, private val databases: Dat
      * The default suggested usage of the [DiscordChatCommand]
      */
     override fun getUsage(): String = "details CharacterName"
+
+    /**
+     * Adds logging functionality to this instance, and defines some
+     * constant values.
+     */
+    companion object: KLogging() {
+
+        /**
+         * The sidebar colour to use for Alliance of Light
+         */
+        val allianceOfLightColour = Color.decode("#1A75FF")
+
+        /**
+         * The sidebar colour to use for Union of Fury
+         */
+        val unionOfFuryColour = Color.decode("#FF3300")
+    }
 }
