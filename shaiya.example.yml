@@ -1,0 +1,46 @@
+# The Discord bot configuration
+discord:
+
+  # The prefix for bot commands. Messages must start with this symbol for the bot to respond to them.
+  prefix: "!"
+
+  # The bot login token, which is used to connect to the Discord bot account.
+  token: ""
+
+  # The id of the Discord server to operate on
+  server: 0
+
+  # The name of the Alliance of Light trade chat channel
+  light-channel: "light-trade"
+
+  # The name of the Union of Fury trade chat channel
+  fury-channel: "fury-trade"
+
+  # The Redis topic for messages from Discord to the game
+  discord-topic: "discord_trade"
+
+  # The Redis topic for messages from the game to Discord
+  game-topic: "game_trade"
+
+# The MSSQL database configuration
+database:
+
+  # The host address of the MSSQL server.
+  host: "127.0.0.1"
+
+  # The user to login to MSSQL with. Ideally, user should only have the following permissions:
+  # - SELECT PS_GameData.dbo.Chars
+  user: "sa"
+
+  # The password of the MSSQL user.
+  pass: "password123"
+
+# The Redis configuration
+redis:
+
+  # The Redis endpoint. Redis is used as an in-memory database for caching data rather than constantly requesting
+  # it from the database / game server, and also used as a pub-sub system for communicating with game servers.
+  endpoint: "redis://localhost:6379"
+
+  # The password for the Redis server
+  password: ""

@@ -1,0 +1,22 @@
+apply plugin: 'application'
+
+description = 'Shaiya Discord Bot'
+mainClassName = 'net.shaiya.discord.Launcher'
+
+run {
+    workingDir = rootProject.projectDir
+}
+
+dependencies {
+    compile project(':utils')
+
+    // https://mvnrepository.com/artifact/net.dv8tion/JDA
+    compile group: 'net.dv8tion', name: 'JDA', version: jdaVersion
+
+    // https://mvnrepository.com/artifact/org.redisson/redisson
+    compile group: 'org.redisson', name: 'redisson', version: redissonVersion
+
+    // https://mvnrepository.com/artifact/com.google.code.gson/gson
+    compile group: 'com.google.code.gson', name: 'gson', version: gsonVersion
+
+}

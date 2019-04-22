@@ -1,0 +1,4 @@
+rootProject.name = 'net.shaiya'
+
+include ':utils'
+include ':discord'

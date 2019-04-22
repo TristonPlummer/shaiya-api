@@ -1,0 +1,7 @@
+/.idea/
+/.gradle/
+build/
+out/
+
+shaiya.yml
+error.log

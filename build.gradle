@@ -1,0 +1,67 @@
+buildscript {
+
+    apply from: 'gradle/properties.gradle'
+
+    repositories {
+        mavenCentral()
+    }
+    
+    dependencies {
+        classpath group: 'org.jetbrains.kotlin', name: 'kotlin-gradle-plugin', version: kotlinVersion
+    }
+}
+
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.3.21"
+}
+
+apply from: 'gradle/properties.gradle'
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply from: "$rootDir/gradle/kotlin.gradle"
+
+    group = 'net.shaiya'
+    version = '0.0.1'
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url "https://repo.maven.apache.org/maven2" }
+        maven { url 'https://jitpack.io' }
+    }
+
+    dependencies {
+
+        // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib-jdk8
+        compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlinVersion
+
+        // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-scripting-common
+        compile group: 'org.jetbrains.kotlin', name: 'kotlin-scripting-common', version: kotlinVersion
+
+        // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-script-runtime
+        compile group: 'org.jetbrains.kotlin', name: 'kotlin-script-runtime', version: kotlinVersion
+
+        // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
+        compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: coroutineVersion
+
+        // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+        compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion
+
+        // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging
+        compile group: 'io.github.microutils', name: 'kotlin-logging', version: klogVersion
+
+        // https://mvnrepository.com/artifact/com.google.guava/guava
+        compile group: 'com.google.guava', name: 'guava', version: guavaVersion
+
+        // https://mvnrepository.com/artifact/com.google.inject/guice
+        compile group: 'com.google.inject', name: 'guice', version: guiceVersion
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions {
+            jvmTarget = jvmVersion
+        }
+    }
+}

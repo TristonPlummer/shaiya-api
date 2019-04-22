@@ -1,0 +1,14 @@
+dependencies {
+
+    // https://mvnrepository.com/artifact/com.github.binarywang/java-emoji-converter
+    compile group: 'com.github.binarywang', name: 'java-emoji-converter', version: emojiVersion
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-text
+    compile group: 'org.apache.commons', name: 'commons-text', version: commonsTextVersion
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion
+}

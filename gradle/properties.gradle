@@ -1,0 +1,15 @@
+ext {
+    jvmVersion = '1.8'
+    kotlinVersion = '1.3.30'
+    coroutineVersion = '1.2.0'
+    log4jVersion = '2.11.2'
+    klogVersion = '1.6.26'
+    jacksonVersion = '2.9.8'
+    commonsTextVersion = '1.6'
+    emojiVersion = '0.1.1'
+    guavaVersion = '27.1-jre'
+    guiceVersion = '4.2.2'
+    jdaVersion = '3.3.1_303'
+    redissonVersion = '3.10.6'
+    gsonVersion = '2.8.5'
+}
