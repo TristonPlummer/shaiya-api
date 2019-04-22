@@ -3,15 +3,19 @@ package net.shaiya.discord
 import com.google.common.reflect.ClassPath
 import com.google.inject.Guice
 import com.google.inject.Injector
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import mu.KLogging
 import net.shaiya.util.Properties
 import java.nio.file.Path
 import net.dv8tion.jda.core.AccountType
 import net.dv8tion.jda.core.JDABuilder
+import net.shaiya.database.Databases
 import net.shaiya.discord.events.DiscordEvent
 import org.redisson.client.codec.StringCodec
 import org.redisson.config.Config
 import java.io.IOException
+import java.lang.reflect.Modifier
 
 /**
  * @author Triston Plummer ("Cups")
@@ -46,8 +50,18 @@ class Bot {
         if (redisPassword.isNotEmpty()) serverConf.password = redisPassword
         redisConfig.codec = StringCodec()
 
+        // Connect to the database
+        val databaseConf = properties.get<Map<String, Any?>>("database") ?: throw IOException("Database properties not found")
+        val databaseHost = databaseConf["host"] as String
+        val databaseUser = databaseConf["user"] as String
+        val databasePass = databaseConf["pass"] as String
+
+        // The database connector instance
+        val database = Databases()
+        database.init(databaseHost, 1433, databaseUser, databasePass)
+
         // The dependency injection module
-        val injector = Guice.createInjector(DiscordModule(discord = client, redisOptions = redisConfig))
+        val injector = Guice.createInjector(DiscordModule(discord = client, redisOptions = redisConfig, databases = database))
 
         // Initialise the DiscordEvent queue
         DiscordEvent.init()
@@ -72,7 +86,7 @@ class Bot {
         // Loop through the class metadata
         for (metadata in classes) {
             val clazz = metadata.load()
-            if (DiscordEvent::class.java.isAssignableFrom(clazz)) {
+            if (DiscordEvent::class.java.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.modifiers)) {
                 val instance = injector.getInstance(clazz) as DiscordEvent
                 instance.init(config)
             }

@@ -12,4 +12,5 @@ ext {
     jdaVersion = '3.3.1_303'
     redissonVersion = '3.10.6'
     gsonVersion = '2.8.5'
+    exposedVersion = '0.13.6'
 }

@@ -9,6 +9,7 @@ run {
 
 dependencies {
     compile project(':utils')
+    compile project(':database')
 
     // https://mvnrepository.com/artifact/net.dv8tion/JDA
     compile group: 'net.dv8tion', name: 'JDA', version: jdaVersion
@@ -19,4 +20,12 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     compile group: 'com.google.code.gson', name: 'gson', version: gsonVersion
 
+    // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.3.1'
+
+    // https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc
+    compile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '7.3.0.jre8-preview'
+
+    // https://bintray.com/kotlin/exposed/exposed/view#
+    compile group: 'org.jetbrains.exposed', name: 'exposed', version: exposedVersion
 }

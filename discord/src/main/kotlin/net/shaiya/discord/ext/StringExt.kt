@@ -2,6 +2,7 @@ package net.shaiya.discord.ext
 
 import com.github.binarywang.java.emoji.EmojiConverter
 import org.apache.commons.text.WordUtils
+import java.util.regex.Pattern
 
 /**
  * A [Regex] used for matching the tail end of a Discord emoji string
@@ -19,6 +20,11 @@ val emojiHeadRegex = Regex("^(<[a]?:)")
 val whitespaceRegex = Regex("\\s+/g")
 
 /**
+ * A [Regex] used for seperating command arguments by whitespace and quotes
+ */
+val commandRegex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'")!!
+
+/**
  * The [EmojiConverter] instance
  */
 private val emoji = EmojiConverter.getInstance()
@@ -29,7 +35,7 @@ private val emoji = EmojiConverter.getInstance()
  * @return  The new [String] instance
  */
 fun String.toTitleCase() : String {
-    return WordUtils.capitalize(this)
+    return WordUtils.capitalize(this.toLowerCase())
 }
 
 /**
@@ -41,3 +47,21 @@ fun String.clean() : String = emoji.toAlias(
         .replace(emojiHeadRegex, ":")
         .replace(whitespaceRegex, " ")
 )
+
+/**
+ * Splits a command by spaces, unless they are surrounded by quotes
+ *
+ * @return  The list of arguments
+ */
+fun String.commandSplit() : List<String> {
+    val args = mutableListOf<String>()
+    val matcher = commandRegex.matcher(this)
+    while (matcher.find()) {
+        when {
+            matcher.group(1) != null -> args.add(matcher.group(1))
+            matcher.group(2) != null -> args.add(matcher.group(2))
+            else -> args.add(matcher.group())
+        }
+    }
+    return args
+}
