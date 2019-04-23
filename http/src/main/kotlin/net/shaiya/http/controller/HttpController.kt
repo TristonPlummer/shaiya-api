@@ -90,9 +90,7 @@ abstract class HttpController(private val route: String) {
         val parameters = parameters
 
         // If the parameter is 1, bind the route
-        if (parameters.size == 1) {
-            return { ctx -> invoke(controller, ctx)}
-        }
+        if (parameters.size == 1) return { ctx -> invoke(controller, ctx)}
 
         // Drop the first parameter
         val params = parameters.drop(1).associate { p -> p.name to p.type }
