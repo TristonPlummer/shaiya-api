@@ -68,19 +68,13 @@ abstract class HttpController(private val route: String) {
      * @return  The path
      */
     private fun Method.getRoutePath() : String {
-
-        // Get the parameters
-        val parameters = parameters
-
+        
         // If the parameter is 1, bind the route
         if (parameters.size == 1) return ""
 
-        // Drop the first parameter
-        val params = parameters.drop(1).associate { p -> p.name to p.type }
-
         // The route path
         val bldr = StringBuilder(route)
-        params.forEach { p -> bldr.append("/:${p.key}") }
+        parameters.drop(1).forEach { p -> bldr.append("/:${p.name}") }
         return bldr.toString()
     }
 
@@ -92,9 +86,6 @@ abstract class HttpController(private val route: String) {
      * @return  The
      */
     private fun Method.createRoute(controller: HttpController) : (Context) -> Unit {
-
-        // Get the parameters
-        val parameters = parameters
 
         // If the parameter is 1, bind the route
         if (parameters.size == 1) return { ctx -> invoke(controller, ctx)}
