@@ -6,7 +6,7 @@ import net.shaiya.repository.UserRepository
 import javax.inject.Inject
 
 /**
- * @author Triston Plummer
+ * @author Triston Plummer ("Cups")
  *
  * Handles various Shaiya user related routes.
  *
