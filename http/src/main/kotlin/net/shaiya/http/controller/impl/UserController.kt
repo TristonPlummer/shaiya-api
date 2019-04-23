@@ -19,8 +19,6 @@ class UserController @Inject constructor(private val repository: UserRepository)
      *
      * @param   name    The name of the user
      */
-    fun Context.get(name: String) {
-        val user = repository.getUser(name)
-        json(user)
-    }
+    fun Context.get(name: String) = json(repository.getUser(name))
+
 }
