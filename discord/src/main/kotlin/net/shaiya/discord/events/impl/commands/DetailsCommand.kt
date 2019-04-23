@@ -9,8 +9,8 @@ import net.dv8tion.jda.core.entities.TextChannel
 import net.shaiya.discord.events.impl.DiscordChatCommand
 import net.shaiya.discord.ext.toTitleCase
 import net.shaiya.discord.models.ShaiyaUser
-import net.shaiya.discord.repository.UserRepository
 import net.shaiya.queue.QueueTask
+import net.shaiya.repository.UserRepository
 import net.shaiya.util.shaiya.ShaiyaClass
 import net.shaiya.util.shaiya.ShaiyaFaction
 import org.redisson.api.RedissonClient
@@ -39,7 +39,7 @@ class DetailsCommand @Inject constructor(client: JDA, private val repository: Us
         val name = args[0]
 
         // The user instance
-        val user = repository.getUser(task, name)
+        val user = repository.getUser(name)
 
         // If the author was not retrieved
         if (user == null) {

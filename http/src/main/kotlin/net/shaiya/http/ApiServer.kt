@@ -1,44 +1,38 @@
-package net.shaiya.discord
+package net.shaiya.http
 
 import com.google.common.reflect.ClassPath
 import com.google.inject.Guice
 import com.google.inject.Injector
+import io.javalin.Javalin
 import mu.KLogging
-import net.shaiya.util.Properties
-import java.nio.file.Path
-import net.dv8tion.jda.core.AccountType
-import net.dv8tion.jda.core.JDABuilder
 import net.shaiya.database.Databases
-import net.shaiya.discord.events.DiscordEvent
+import net.shaiya.http.controller.HttpController
+import net.shaiya.util.Properties
 import org.redisson.client.codec.StringCodec
 import org.redisson.config.Config
 import java.io.IOException
 import java.lang.reflect.Modifier
+import java.nio.file.Path
 
 /**
  * @author Triston Plummer ("Cups")
  *
- * The [Bot] is responsible for initiating the Discord bot service, and configuring
- * the Redis and database connections it requires to function.
+ * The [ApiServer] is responsible for initialising and configuring a JSON API for retrieving data and
+ * using it in external applications.
  */
-class Bot {
+class ApiServer {
 
     /**
-     * Initialises the Discord bot instance.
+     * Starts this [ApiServer] instance
      *
      * @param config    The path to the configuration file
      */
-    fun startBot(config: Path) {
+    fun startServer(config: Path) {
 
         // Load the discord bot properties
         val properties = Properties()
         properties.loadYaml(config.toFile())
-        logger.info { "Loaded properties for the Shaiya discord bot" }
-
-        // Build the Discord bot instance
-        val discordConf = properties.get<Map<String, Any?>>("discord") ?: throw IOException("Discord properties not found")
-        val builder = JDABuilder(AccountType.BOT).setAutoReconnect(true).setToken(discordConf["token"] as String)
-        val client = builder.buildBlocking()
+        logger.info { "Loaded properties for the Shaiya HTTP API" }
 
         // Build the RedisOptions configuration
         val redisConf = properties.get<Map<String, Any?>>("redis") ?: throw IOException("Redis properties not found")
@@ -58,34 +52,40 @@ class Bot {
         val database = Databases()
         database.init(databaseHost, 1433, databaseUser, databasePass)
 
+        // The HTTP configuration
+        val httpConf = properties.get<Map<String, Any?>>("http") ?: throw IOException("HTTP properties not found")
+        val port = httpConf["port"] as Int
+
+        // The Javalin instance
+        val http = Javalin.create()
+                .enableCorsForAllOrigins()
+                .start(port)
+
         // The dependency injection module
-        val injector = Guice.createInjector(DiscordModule(discord = client, redisOptions = redisConfig, databases = database))
+        val injector = Guice.createInjector(HttpModule(http = http, redisOptions = redisConfig, databases = database))
 
-        // Initialise the DiscordEvent queue
-        DiscordEvent.init()
-
-        // Initialises the bot events
-        registerEvents(discordConf, injector)
+        // Initialises the HTTP controllers
+        registerControllers(httpConf, injector)
     }
 
     /**
-     * Registers the [DiscordEvent] instances.
+     * Registers the [HttpController] instances.
      *
      * @param injector  The dependency injector
      */
-    private fun registerEvents(config: Map<String, Any?>, injector: Injector) {
+    private fun registerControllers(config: Map<String, Any?>, injector: Injector) {
 
         // The current classpath
         val classPath = ClassPath.from(javaClass.classLoader)
 
         // The set of classes
-        val classes = classPath.getTopLevelClassesRecursive(EVENT_PACKAGE)
+        val classes = classPath.getTopLevelClassesRecursive(CONTROLLER_PACKAGE)
 
         // Loop through the class metadata
         for (metadata in classes) {
             val clazz = metadata.load()
-            if (DiscordEvent::class.java.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.modifiers)) {
-                val instance = injector.getInstance(clazz) as DiscordEvent
+            if (HttpController::class.java.isAssignableFrom(clazz) && !Modifier.isAbstract(clazz.modifiers)) {
+                val instance = injector.getInstance(clazz) as HttpController
                 instance.init(config)
             }
         }
@@ -98,8 +98,8 @@ class Bot {
     companion object: KLogging() {
 
         /**
-         * The package used for [DiscordEvent]s
+         * The package used for [HttpController]s
          */
-        const val EVENT_PACKAGE = "net.shaiya.discord.events.impl"
+        const val CONTROLLER_PACKAGE = "net.shaiya.http.controller.impl"
     }
 }

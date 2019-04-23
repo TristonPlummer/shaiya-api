@@ -1,4 +1,4 @@
-package net.shaiya.discord.repository
+package net.shaiya.repository
 
 import com.google.gson.Gson
 import com.google.inject.Inject
@@ -35,12 +35,11 @@ class UserRepository @Inject constructor(private val databases: Databases, priva
     /**
      * Gets a [ShaiyaUser] instance.
      *
-     * @param task  The [QueueTask] instance
      * @param name  The name of the user to search for
      *
      * @return      The [ShaiyaUser] instance
      */
-    suspend fun getUser(task: QueueTask, name: String): ShaiyaUser? {
+    fun getUser(name: String): ShaiyaUser? {
 
         // The name, in lowercase
         val nameLower = name.toLowerCase()
@@ -64,9 +63,6 @@ class UserRepository @Inject constructor(private val databases: Databases, priva
 
         // If the user was successfully retrieved, cache it for 10 minutes
         if (user != null) {
-
-            // Wait 1 second
-            task.wait(1)
 
             // The Redis data
             val cached = redis.getBucket<String>(nameLower)
