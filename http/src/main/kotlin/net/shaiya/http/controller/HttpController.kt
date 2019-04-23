@@ -1,11 +1,13 @@
 package net.shaiya.http.controller
 
+import com.google.gson.Gson
 import io.javalin.Context
 import io.javalin.Javalin
 import io.javalin.NotFoundResponse
 import mu.KLogging
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.websocket.api.StatusCode
+import java.lang.Exception
 import java.lang.StringBuilder
 import java.lang.reflect.Method
 import javax.inject.Inject
@@ -31,6 +33,11 @@ abstract class HttpController(private val route: String) {
      * The HTTP configuration
      */
     private lateinit var config : Map<String, Any?>
+
+    /**
+     * The [Gson] instance
+     */
+    private val gson = Gson()
 
     /**
      * Initialises this [HttpController]
@@ -122,9 +129,18 @@ abstract class HttpController(private val route: String) {
      * @return  The mapped type
      */
     private fun map(value: String, type: Class<*>) : Any = when (type) {
+        Long::class.java -> value.toLong()
         Int::class.java -> value.toInt()
         Boolean::class.java -> value.toBoolean()
-        else -> type.cast(value)
+        else -> {
+
+            // Attempt to cast to a the type first, and fallback to JSON
+            try {
+                type.cast(value)
+            } catch (e: Exception) {
+                gson.fromJson(value, type)
+            }
+        }
     }
 
     /**
