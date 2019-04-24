@@ -2,6 +2,7 @@ package net.shaiya.http.controller.impl
 
 import io.javalin.Context
 import net.shaiya.http.controller.HttpController
+import net.shaiya.http.methods.Get
 import net.shaiya.repository.UserRepository
 import javax.inject.Inject
 
@@ -19,6 +20,6 @@ class UserController @Inject constructor(private val repository: UserRepository)
      *
      * @param   name    The name of the user
      */
-    fun Context.get(name: String) = json(repository.getUser(name))
+    @Get fun Context.getUserByName(name: String) = json(repository.getUser(name))
 
 }

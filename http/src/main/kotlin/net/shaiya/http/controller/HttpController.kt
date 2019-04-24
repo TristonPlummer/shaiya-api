@@ -3,10 +3,10 @@ package net.shaiya.http.controller
 import com.google.gson.Gson
 import io.javalin.Context
 import io.javalin.Javalin
-import io.javalin.NotFoundResponse
 import mu.KLogging
+import net.shaiya.http.methods.Get
+import net.shaiya.http.methods.Post
 import org.eclipse.jetty.http.HttpStatus
-import org.eclipse.jetty.websocket.api.StatusCode
 import java.lang.Exception
 import java.lang.StringBuilder
 import java.lang.reflect.Method
@@ -58,8 +58,8 @@ abstract class HttpController(private val route: String) {
         val methods = this.javaClass.methods
 
         // Register the "get" and "post" methods
-        methods.filter { it.name == "get" }.forEach { http.get(it.getRoutePath(), it.createRoute(this)) }
-        methods.filter { it.name == "post" }.forEach { http.post(it.getRoutePath(), it.createRoute(this)) }
+        methods.filter { it.isAnnotationPresent(Get::class.java) }.forEach { http.get(it.getRoutePath(), it.createRoute(this)) }
+        methods.filter { it.isAnnotationPresent(Post::class.java) }.forEach { http.post(it.getRoutePath(), it.createRoute(this)) }
     }
 
     /**
@@ -68,7 +68,7 @@ abstract class HttpController(private val route: String) {
      * @return  The path
      */
     private fun Method.getRoutePath() : String {
-        
+
         // If the parameter is 1, bind the route
         if (parameters.size == 1) return ""
 
